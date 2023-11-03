@@ -1,7 +1,6 @@
 import PopUp, { Props } from "$store/islands/PopUp.tsx";
 import type { ImageWidget } from "apps/admin/widgets.ts";
 
-
 export interface PropsPopUp {
     popUp: Props;
     image: {
