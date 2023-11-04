@@ -14,7 +14,6 @@ export interface Props {
  * @format datetime
  */
     expiresAt: string;
-    /** @format html */
     vaucher: string;
 }
 
@@ -67,11 +66,21 @@ function PopUp({ props }: { props: Props }) {
 
     startCountdown()
 
+    const [copied, setCopied] = useState(false)
+
+    function copiarTexto() {
+        let textoCopiado = document.getElementById("texto");
+        textoCopiado.select();
+        textoCopiado.setSelectionRange(0, 99999)
+        document.execCommand("copy");
+        setCopied(true)
+    }
+
     return (
         <div className="w-full">
             <div>
                 <div className="flex flex-col justify-center items-center opacity-100 rounded-2xl relative p-4 gap-4 max-w-[400px]">
-                    <div dangerouslySetInnerHTML={{ __html: props.title }} className="text-[1.8rem] font-bold uppercase text-center border-b-2 border-t-2 pb-1 pt-1"></div>
+                    <div dangerouslySetInnerHTML={{ __html: props.title }} className="text-[1.8rem] text-center border-b-2 border-t-2 pb-1 pt-1"></div>
                     <div className="text-center" dangerouslySetInnerHTML={{ __html: props.description }}></div>
                     <div className="grid grid-flow-col gap-2 text-center auto-cols-max">
                         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content text-[0.8rem]">
@@ -99,9 +108,8 @@ function PopUp({ props }: { props: Props }) {
                             segs
                         </div>
                     </div>
-                    <div className={"border-dashed border-[3px] border-red px-4 p-2 uppercase text-5xl font-bold"}>
-
-                        <div dangerouslySetInnerHTML={{ __html: props.vaucher }}></div>
+                    <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copiarTexto() }}>
+                        <input className={" bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none"} readonly type="text" name="texto" id="texto" placeholder="" value={props.vaucher} />
                     </div>
                 </div>
             </div>
