@@ -29,22 +29,22 @@ export interface Props {
     */
     titleNewsletter: string;
     /** 
-     * @title descripition of Newsletter
+     * @title Description of Newsletter
      * @format html 
     */
     descriptionNewsletter: string;
     /** 
-     * @title message of Sucess in Newsletter
+     * @title Message of Sucess in Newsletter
      * @format html 
     */
     msgSucessNewsletter: string;
     /** 
-     * @title message of Error in Newsletter
+     * @title Message of Error in Newsletter
      * @format html 
     */
     msgErrorNewsletter: string;
     /** 
-    * @title voucher Newsletter
+    * @title Voucher Newsletter
     */
     voucherNewsletter: string;
 }
@@ -187,9 +187,12 @@ function PopUp({ props }: { props: Props }) {
                                 segs
                             </div>
                         </div>
-                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherContdown") }}>
-                            {copied && <span className={" absolute capitalize text-xs text-white bg-black rounded-lg translate-x-[-20%] translate-y-[-50%] px-2 py-1"}>copiado</span>}
-                            <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherContdown" placeholder="" value={props.vaucher} />
+                        <div className={" py-5"}>
+                            <p className={"text-sm pb-4"}>Use o Cupom:</p>
+                            <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherContdown") }}>
+                                {copied && <span className={" absolute capitalize text-xs text-white bg-black rounded-lg translate-x-[-20%] translate-y-[-50%] px-2 py-1"}>copiado</span>}
+                                <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherContdown" placeholder="" value={props.vaucher} />
+                            </div>
                         </div>
                     </div>
                     :
@@ -224,8 +227,12 @@ function PopUp({ props }: { props: Props }) {
 
                                             </div>
                                         </div>
-                                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherNews") }}>
-                                            <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherNews" placeholder="" value={props.voucherNewsletter} />
+                                        <div className={" py-5"}>
+                                            <p className={"text-sm pb-4"}>Use o Cupom:</p>
+                                            <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherNews") }}>
+                                                {copied && <span className={" absolute capitalize text-xs text-white bg-black rounded-lg translate-x-[-20%] translate-y-[-50%] px-2 py-1"}>copiado</span>}
+                                                <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherNews" placeholder="" value={props.voucherNewsletter} />
+                                            </div>
                                         </div>
                                     </div>
                                     : <div className={"w-full justify-center items-center flex flex-col gap-5"}>
@@ -253,9 +260,13 @@ export interface PropsPopUp {
      */
     popUp: Props;
     /**
- * @title Image of Modal
- */
+     * @title Image of Modal
+     */
     image: {
+        /**
+         * @title Image
+         * @description Recomend image size 356 × 475px
+         */
         src: ImageWidget;
         alt: string;
     }
@@ -324,14 +335,14 @@ export default function PopUpExitIntent({ popUp, image }: PropsPopUp) {
             {activeModal &&
                 <div className={"w-full h-full fixed top-0 left-0 z-50 bg-[#00000099]"} >
                     <div className={"w-full h-full flex justify-center items-center px-4"}>
-                        <div className={"bg-[#75c2e4] flex flex-row justify-between w-full max-w-[710px] box-content items-center rounded-lg gap-2 relative "}>
+                        <div className={"bg-[#75c2e4] flex flex-row justify-between w-full max-w-[350px] lg:max-w-[730px] box-content items-center rounded-lg gap-2 relative "}>
                             <div onClick={() => setActiveModal(false)} className="rotate-45 border-2 border-[#00000099] w-[30px] h-[30px] rounded-full flex justify-center items-center absolute top-0 translate-x-[-50%] translate-y-[-50%] bg-white left-0">
                                 <Icon id="Plus" size={40} strokeWidth={1} />
                             </div>
                             <div className={" w-full lg:w-2/4"}>
                                 <PopUp props={popUp} />
                             </div>
-                            <div className={"hidden lg:flex w-3/5 h-full max-w-[356px] rounded-r-lg"}>
+                            <div className={"hidden lg:flex w-2/4 h-full rounded-r-lg"}>
                                 <Image className={"object-contain w-full rounded-r-lg"} src={image.src} alt={image.alt} />
                             </div>
                         </div>
