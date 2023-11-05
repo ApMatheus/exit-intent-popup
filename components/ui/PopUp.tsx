@@ -1,5 +1,6 @@
+
 import Icon from "$store/components/ui/Icon.tsx";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import type { ImageWidget } from "apps/admin/widgets.ts";
 import Image from "apps/website/components/Image.tsx";
 
@@ -59,6 +60,16 @@ function PopUp({ props }: { props: Props }) {
     const [isActive, setIsActive] = useState(false);
     const [activeNewsletter, setActiveNewslleter] = useState(false)
 
+    const [formError, setFormError] = useState(false)
+    const [form, setForm] = useState(true)
+    const [newUser, setNewUser] = useState(true)
+
+    const nameRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const checkRef = useRef<HTMLInputElement>(null);
+
+    const [copied, setCopied] = useState(false)
+
 
     useEffect(() => {
         let countdownInterval: any;
@@ -108,50 +119,39 @@ function PopUp({ props }: { props: Props }) {
 
     startCountdown()
 
-    const [copied, setCopied] = useState(false)
-
-    function copiarTexto() {
-        let textoCopiado = document.getElementById("texto");
-        textoCopiado.select();
-        textoCopiado.setSelectionRange(0, 99999)
-        document.execCommand("copy");
-        setCopied(true)
+    function copyVoucher(id: string) {
+        let textoCopiado = document.getElementById(id);
+        if (textoCopiado != null) {
+            textoCopiado.select();
+            textoCopiado.setSelectionRange(0, 99999)
+            document.execCommand("copy");
+            setCopied(true)
+        }
     }
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [check, setCheck] = useState(false)
-    const [nameError, setNameError] = useState(false)
-    const [emailError, setEmailError] = useState(false)
-    const [checkError, setCheckError] = useState(false)
-    const [form, setForm] = useState(true)
-    const [newUser, setNewUser] = useState(true)
-
-    const handleNameChange = (event: any) => {
-        setName(event.target.value); // Atualiza o estado 'name' com o valor do campo de entrada
-    };
-    const handleEmailChange = (event: any) => {
-        setEmail(event.target.value); // Atualiza o estado 'name' com o valor do campo de entrada
-    };
-    const handleCheckChange = () => {
-        setCheck(!check); // Atualiza o estado 'name' com o valor do campo de entrada
-    };
-
     function submitForm() {
-        if (name != "" && email != "" && check) {
-            console.log("confirmado", name, email, check)
-            setForm(false)
-            setNameError(false)
-            setEmailError(false)
-            setCheckError(false)
-            setNewUser(true)
+
+        const name: string | undefined = nameRef.current?.value
+        const email: string | undefined = emailRef.current?.value
+        const check: boolean | undefined = checkRef.current?.checked
+
+        if (name && email && check) {
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                setFormError(false)
+                if (email == "teste@gmail.com") {
+                    setNewUser(true)
+                    setForm(false)
+                } else {
+                    setNewUser(false)
+                    setForm(false)
+                }
+            } else {
+                setFormError(true)
+            }
         } else {
-            name == "" ? setNameError(true) : setNameError(false)
-            email == "" ? setEmailError(true) : setEmailError(false)
-            check == false ? setCheckError(true) : setCheckError(false)
-            setForm(true)
+            setFormError(true)
         }
-        console.log(nameError, emailError, checkError)
+        console.log("erro ", formError, name, email, check)
     }
 
     return (
@@ -159,8 +159,8 @@ function PopUp({ props }: { props: Props }) {
             <div>
                 {!activeNewsletter ?
                     <div className="flex flex-col justify-center items-center opacity-100 rounded-2xl relative p-4 gap-4 max-w-[400px] lg:max-w-[350px]">
-                        <div dangerouslySetInnerHTML={{ __html: props.title }} className="text-[1.8rem] text-center lg:text-start w-full px-1 border-b-2 pb-1 pt-1"></div>
-                        <div className=" px-1 text-center lg:text-start" dangerouslySetInnerHTML={{ __html: props.description }}></div>
+                        <div dangerouslySetInnerHTML={{ __html: props.title }} className=" text-start text-2xl lg:text-[1.75rem] w-full px-1 border-b-2 pb-1 pt-1"></div>
+                        <div className=" px-1 text-start" dangerouslySetInnerHTML={{ __html: props.description }}></div>
                         <div className="grid grid-flow-col gap-2 text-center auto-cols-max">
                             <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content text-[0.8rem]">
                                 <span className="countdown font-mono text-[2.4rem]">
@@ -187,27 +187,29 @@ function PopUp({ props }: { props: Props }) {
                                 segs
                             </div>
                         </div>
-                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copiarTexto() }}>
-                            <input className={" bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="texto" placeholder="" value={props.vaucher} />
+                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherContdown") }}>
+                            {copied && <span className={" absolute capitalize text-xs text-white bg-black rounded-lg translate-x-[-20%] translate-y-[-50%] px-2 py-1"}>copiado</span>}
+                            <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherContdown" placeholder="" value={props.vaucher} />
                         </div>
                     </div>
                     :
                     <div className="flex flex-col justify-center items-center opacity-100 rounded-2xl relative p-4 gap-4 max-w-[400px] lg:max-w-[350px]">
                         {form ?
                             <div className={"flex flex-col justify-center gap-4"}>
-                                <div dangerouslySetInnerHTML={{ __html: props.titleNewsletter }} className="text-[1.8rem] px-1 w-full text-start border-b-2  pb-1 pt-1"></div>
+                                <div dangerouslySetInnerHTML={{ __html: props.titleNewsletter }} className="text-2xl lg:text-[1.75rem] px-1 w-full text-start border-b-2  pb-1 pt-1"></div>
                                 <div className="text-start px-1" dangerouslySetInnerHTML={{ __html: props.descriptionNewsletter }}></div>
                                 <div className="form-control w-full max-w-xs">
+                                    {formError && <p className={"text-[10px] text-red-500 font-bold"}>Preencha o formulario corretamente*</p>}
                                     <label className="label text-xs">
                                         <span className="label-text">Nome:</span>
                                     </label>
-                                    <input type="text" placeholder="Nome" onChange={handleNameChange} className="input input-bordered w-full max-w-xs h-[2.5rem] text-xs" />
+                                    <input type="text" placeholder="Nome" ref={nameRef} className="input input-bordered w-full max-w-xs h-[2.5rem] text-xs" />
                                     <label className="label  text-xs">
                                         <span className="label-text">Email:</span>
                                     </label>
-                                    <input type="text" placeholder="Email" onChange={handleEmailChange} className="input input-bordered w-full max-w-xs h-[2.5rem] text-xs" />
-                                    <label className="label justify-start gap-2 cursor-pointer" onChange={handleCheckChange} >
-                                        <input type="checkbox" className="checkbox w-[15px] h-[15px]" />
+                                    <input type="text" placeholder="Email" ref={emailRef} className="input input-bordered w-full max-w-xs h-[2.5rem] text-xs" />
+                                    <label className="label justify-start gap-2 cursor-pointer" >
+                                        <input type="checkbox" ref={checkRef} className="checkbox w-[15px] h-[15px]" />
                                         <span className="label-text text-xs">Aceito os temos de uso </span>
                                     </label>
                                     <button className="btn no-animation bg-primary text-base-100 border-none" onCLick={submitForm}>Enviar</button>
@@ -222,8 +224,8 @@ function PopUp({ props }: { props: Props }) {
 
                                             </div>
                                         </div>
-                                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copiarTexto() }}>
-                                            <input className={" bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="texto" placeholder="" value={props.voucherNewsletter} />
+                                        <div className={"border-dashed border-[3px] border-red uppercase text-5xl font-bold cursor-pointer"} onClick={() => { copyVoucher("voucherNews") }}>
+                                            <input className={" select-none bg-transparent cursor-pointer max-w-[300px] text-center border-none outline-none uppercase"} readonly type="text" name="texto" id="voucherNews" placeholder="" value={props.voucherNewsletter} />
                                         </div>
                                     </div>
                                     : <div className={"w-full justify-center items-center flex flex-col gap-5"}>
@@ -321,7 +323,7 @@ export default function PopUpExitIntent({ popUp, image }: PropsPopUp) {
         <>
             {activeModal &&
                 <div className={"w-full h-full fixed top-0 left-0 z-50 bg-[#00000099]"} >
-                    <div className={"w-full h-full flex justify-center items-center px-7"}>
+                    <div className={"w-full h-full flex justify-center items-center px-4"}>
                         <div className={"bg-[#75c2e4] flex flex-row justify-between w-full max-w-[710px] box-content items-center rounded-lg gap-2 relative "}>
                             <div onClick={() => setActiveModal(false)} className="rotate-45 border-2 border-[#00000099] w-[30px] h-[30px] rounded-full flex justify-center items-center absolute top-0 translate-x-[-50%] translate-y-[-50%] bg-white left-0">
                                 <Icon id="Plus" size={40} strokeWidth={1} />
